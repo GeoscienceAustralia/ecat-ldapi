@@ -1,0 +1,38 @@
+<html>
+	<head profile="http://dublincore.org/documents/dcq-html/">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="schema.dc" href="http://purl.org/dc/elements/1.1/" />
+		<link rel="schema.dcterms" href="http://purl.org/dc/terms/" />
+
+		<meta name="dc.identifier" content="{{ metadata['identifier'] }}" />
+		<meta name="dc.language" content="en-au" />
+		<meta name="dc.format" content="text/html" />
+		<meta name="dcterms.creator" content="{{ metadata['creator'] }}" />
+		<meta name="dcterms.publisher" content="{{ metadata['publisher'] }}" />
+		<meta name="dcterms.title" content="{{ metadata['title'] }}" />
+		<meta name="dcterms.description" content="{{ metadata['description'] }}" />
+		<meta name="dcterms.created" content="{{ metadata['created'] }}" />
+		<meta name="dcterms.modified" content="{{ metadata['modified'] }}" />
+		<meta name="dcterms.rights" content="{{ metadata['rights'] }}" />
+
+		<meta name="keywords" content="{{ metadata['keywords'] }}">
+
+		<title>{{ metadata['title'] }}</title>
+	</head>
+	<body>
+        <h1>{{ metadata['title'] }}</h1>
+        <table>
+            <tr><th>Metadata Element</th><th>Value</th></tr>
+            <tr><td>dc.identifier</td><td><a href="{{ metadata['identifier'] }}">{{ metadata['identifier'] }}</a></td></tr>
+            <tr><td>dcterms.creator</td><td>{{ metadata['creator'] }}</td></tr>
+            <tr><td>dcterms.publisher</td><td>{{ metadata['publisher'] }}</td></tr>
+            <tr><td>dcterms.title</td><td>{{ metadata['title'] }}</td></tr>
+            <tr><td>dcterms.description</td><td>{{ metadata['description'] }}</td></tr>
+            <tr><td>dcterms.created</td><td>{{ metadata['created'] }}</td></tr>
+            <tr><td>dcterms.modified</td><td>{{ metadata['modified'] }}</td></tr>
+            <tr><td>dcterms.rights</td><td><a href="{{ metadata['rights'] }}">{{ metadata['rights'] }}</a></td></tr>
+
+            <tr><td>keywords</td><td>{{ metadata['keywords'] }}</td></tr>
+        </table>
+	</body>
+</html>
