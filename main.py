@@ -51,6 +51,7 @@ def make_html(metadata):
 def test_make_html():
     metadata = {
         'identifier': 'http://pid.geoscience.gov.au/dataset/103620',
+        'type': 'software',
         'creator': 'Car, N.J., Ip, A.',
         'publisher': 'Geoscience Australia',
         'title': 'ncskos code repository',
@@ -65,5 +66,88 @@ The tool is presented in a code repository using the Git distributed version con
     open('103620.html', 'w').write(make_html(metadata))
 
 
+def get_metadata_fields_from_gn(uuid):
+    # make CSW request
+    uri = 'http://ecat.ga.gov.au/geonetwork/srv/eng/xml.metadata.get?uuid={}'.format(uuid)
+    r = requests.get(uri)
+    xml = r.content
+    root = etree.fromstring(xml)
+
+    # XPath to all the vars we want
+    namespaces = {
+        'mdb': 'http://standards.iso.org/iso/19115/-3/mdb/1.0',
+        'cit': 'http://standards.iso.org/iso/19115/-3/cit/1.0',
+        'gco': 'http://standards.iso.org/iso/19115/-3/gco/1.0',
+        'gcx': 'http://standards.iso.org/iso/19115/-3/gcx/1.0',
+        'gex': 'http://standards.iso.org/iso/19115/-3/gex/1.0',
+        'gml': 'http://www.opengis.net/gml/3.2',
+        'lan': 'http://standards.iso.org/iso/19115/-3/lan/1.0',
+        'mcc': 'http://standards.iso.org/iso/19115/-3/mcc/1.0',
+        'mco': 'http://standards.iso.org/iso/19115/-3/mco/1.0',
+        'mmi': 'http://standards.iso.org/iso/19115/-3/mmi/1.0',
+        'mrd': 'http://standards.iso.org/iso/19115/-3/mrd/1.0',
+        'mri': 'http://standards.iso.org/iso/19115/-3/mri/1.0',
+        'mrl': 'http://standards.iso.org/iso/19115/-3/mrl/1.0',
+        'xlink': 'http://www.w3.org/1999/xlink',
+        'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+        'geonet': 'http://www.fao.org/geonetwork'
+    }
+    title = root.xpath(
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+        namespaces=namespaces)[0]
+
+    type = root.xpath(
+        '//mdb:MD_Metadata/mdb:metadataScope/mdb:MD_MetadataScope/mdb:resourceScope/mcc:MD_ScopeCode/@codeListValue',
+        namespaces=namespaces)[0]
+
+    description = root.xpath(
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
+        namespaces=namespaces)[0]
+
+    # pointOfContact
+    creators = root.xpath(
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
+        namespaces=namespaces)
+
+    publisher = 'Geoscience Australia'
+
+    created = root.xpath(
+        '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+        namespaces=namespaces)[0]
+
+    modified = root.xpath(
+        '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
+        namespaces=namespaces)[0]
+
+    rights_title = root.xpath(
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+        namespaces=namespaces)[0]
+
+    rights_url = root.xpath(
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()',
+        namespaces=namespaces)[0]
+
+    rights = rights_title + ' (' + rights_url + ')'
+
+    keywords = root.xpath(
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+        namespaces=namespaces)
+
+    return {
+        'identifier': 'coming',
+        'type': type,
+        'title': title,
+        'description': description,
+        'creator': ', '.join(creators),
+        'publisher': publisher,
+        'created': created,
+        'modified': modified,
+        'rights': rights,
+        'keywords': ', '.join(keywords)
+    }
+
+
 if __name__ == '__main__':
-    test_make_html()
+    #test_make_html()
+    metadata = get_metadata_fields_from_gn('05bd5519-6a29-4678-a2d5-b0708c8284e8')
+    print make_html(metadata)
