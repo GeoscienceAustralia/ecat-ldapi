@@ -67,7 +67,7 @@ def get_metadata_fields_from_gn(uuid):
     if len(modified) < 1:
         modified = ''
     else:
-        modified = datetime.datetime.strptime(modified[0], '%Y-%m-%dT%H:%M:%S').strftime('%y-%m-%d')
+        modified = datetime.datetime.strptime(modified[0], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
 
     rights_title = root.xpath(
         '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
