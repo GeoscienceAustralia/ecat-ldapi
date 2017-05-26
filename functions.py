@@ -7,7 +7,6 @@ from jinja2 import Environment, FileSystemLoader
 def get_metadata_fields_from_gn(uuid):
     # make CSW request
     uri = 'http://ecat.ga.gov.au/geonetwork/srv/eng/xml.metadata.get?uuid={}'.format(uuid)
-    print uri
 
     proxies = {
         'http': 'http://sun-web-intdev.ga.gov.au:2710',
