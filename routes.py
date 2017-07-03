@@ -10,11 +10,11 @@ pages = Blueprint('routes', __name__)
 
 @pages.route('/')
 def index():
-    return "soon to be the static meta index page"
+    return "Non-functional index page for the metataggen application"
 
 
 @pages.route('/dataset/uuid/<string:uuid>')
-def dataset(uuid):
+def dataset_uuid(uuid):
     try:
         metadata = functions.get_metadata_fields_from_gn(uuid)
         html = functions.make_html(metadata)
