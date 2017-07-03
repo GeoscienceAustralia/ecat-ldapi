@@ -1,5 +1,5 @@
 APP_DIR = '/Users/car587/work/ecat-staticmeta/'
-LOGFILE = APP_DIR + 'staticmeta.log'
+LOGFILE = APP_DIR + 'metatag.log'
 DEBUG = True
 
 PROXIES = {
