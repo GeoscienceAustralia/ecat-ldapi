@@ -26,6 +26,11 @@ dependencies are in requirements.txt. You will also need Apache2 or another WSGI
 Ensure Apache or similar can spawn a WSGI process for some path to access this API. To do this you will need to edit an 
 Apache or similar config along the lines of the example-apache.conf file. You will need to ensure that the metatag.wsgi 
  file is references in that config file, as it is in the example.
+ 
+For the GA eCat instance, this application's individual dataset endpoint is redirected to by the PID Service at 
+<http://pid.geoscience.gov.au> which uses the pattern 
+*http://pid.geoscience.gov.au/(dataset|service)/([0-9]{2,7})?_view=metatag* pointing to  
+*http://13.54.73.187/metataggen/dataset/$2*.
 
 
 ## License
