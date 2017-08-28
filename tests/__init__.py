@@ -16,4 +16,4 @@ The tool is presented in a code repository using the Git distributed version con
         'keywords': ', '.join(['SKOS', 'Linked Data', 'netCDF', 'vocabulary', 'metadata'])
     }
 
-    open('103620.html', 'w').write(functions.make_html(metadata))
+    open('103620.html', 'w').write(functions.make_metatag_html(metadata))

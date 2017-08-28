@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<metadata
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:aglsterms="http://www.agls.gov.au/agls/terms/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <dcterms:title xml:lang="en-AU">{{ title }}</dcterms:title>
+    <dcterms:modified xsi:type="xsd:dateTime">{{ modified }}</dcterms:modified>
+    <dcterms:creator xsi:type="aglsterms:AglsAgent">{{ creator }}</dcterms:creator>
+    <dcterms:publisher xsi:type="aglsterms:AglsAgent">{{ publisher }}</dcterms:publisher>
+    <dcterms:subject>{{ subject }}</dcterms:subject>
+    <dcterms:description xml:lang="en-AU">{{ description }}</dcterms:description>
+    <aglsterms:category>{{ category }}</aglsterms:category>
+    <aglsterms:serviceType xsi:type="aglsterms:agls-service">{{ serviceType }}</aglsterms:serviceType>
+    <aglsterms:function xsi:type="aglsterms:AGIFT">{{ function }}</aglsterms:function>
+    <dcterms:audience>{{ audience }}</dcterms:audience>
+    <aglsterms:availability xsi:type="aglsterms:AglsAvail">{{ availability }}</aglsterms:availability>
+</metadata>
