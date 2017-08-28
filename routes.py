@@ -2,7 +2,7 @@
 This file contains all the HTTP routes for basic pages (usually HTML)
 """
 import sys
-from flask import request, Blueprint, Response
+from flask import request, Blueprint, Response, render_template
 import functions
 
 pages = Blueprint('routes', __name__)
@@ -13,27 +13,26 @@ def index():
     return "Non-functional index page for the metataggen application"
 
 
-@pages.route('/dataset/uuid/<string:uuid>')
-def dataset_uuid(uuid):
-    try:
-        metadata = functions.get_metadata_fields_from_gn(uuid)
-        html = functions.make_metatag_html(metadata)
-
-        return Response(html)
-    except Exception as e:
-        return Response(
-            'ERROR: likely the UUID does not exist.\n\nDetailed message:\n' + str(e),
-            status=400,
-            mimetype='text/plain'
-        )
-
-
 @pages.route('/dataset/<string:ecat_id>')
 def dataset(ecat_id):
-    if request.args.get('_view') == 'agls':
+    if request.args.get('_view') == 'alternates':
+        # render a static resource pre-configured with all values
+        if request.args.get('_format') in ['text/xml', 'application/xml']:
+            m = request.args.get('_format')
+        else:
+            m = request.accept_mimetypes.best_match(['text/html', 'application/xml', 'text/xml'])
+
+        if m is None:
+            m = 'text/html'
+
+        if m in ['application/xml', 'text/xml']:
+            return Response(render_template('alternates.xml'), mimetype=m)
+        else:
+            return Response(render_template('alternates.html'), mimetype=m)
+    elif request.args.get('_view') == 'agls':
         try:
-            metadata = functions.view_agls_dict_from_csw(ecat_id)
-            xml = functions.make_agls_xml(metadata)
+            metadata = functions.get_view_agls_dict_from_csw(ecat_id)
+            xml = functions.render_agls_xml(metadata)
 
             return Response(xml, mimetype='text/xml')
         except Exception as e:
@@ -42,10 +41,10 @@ def dataset(ecat_id):
                 status=400,
                 mimetype='text/plain'
             )
-    else:
+    else:  # view == 'metatag'
         try:
-            metadata = functions.view_metatag_dict_from_csw(ecat_id)
-            html = functions.make_metatag_html(metadata)
+            metadata = functions.get_view_metatag_dict_from_csw(ecat_id)
+            html = functions.render_metatag_html(metadata)
 
             return Response(html)
         except Exception as e:

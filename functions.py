@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 import config
 
 
-def view_metatag_dict_from_csw(ecat_id):
+def get_view_metatag_dict_from_csw(ecat_id):
     # make CSW request
     csw_uri = 'https://public.ecat.ga.gov.au/geonetwork/srv/eng/csw'
     csw_request_xml = '''
@@ -149,7 +149,7 @@ def view_metatag_dict_from_csw(ecat_id):
     }
 
 
-def view_agls_dict_from_csw(ecat_id):
+def get_view_agls_dict_from_csw(ecat_id):
     # make CSW request
     csw_uri = 'https://public.ecat.ga.gov.au/geonetwork/srv/eng/csw'
     csw_request_xml = '''
@@ -340,7 +340,7 @@ def view_agls_dict_from_csw(ecat_id):
     }
 
 
-def make_agls_xml(metadata_dict):
+def render_agls_xml(metadata_dict):
     # render a Jinja2 template after telling it where the templates dir is
     template = Environment(
         loader=FileSystemLoader(os.path.dirname(os.path.realpath(__file__)) + '/templates')
@@ -350,7 +350,7 @@ def make_agls_xml(metadata_dict):
     return template.render(**metadata_dict)
 
 
-def make_metatag_html(metadata_dict):
+def render_metatag_html(metadata_dict):
     # render a Jinja2 template after telling it where the templates dir is
     template = Environment(
         loader=FileSystemLoader(os.path.dirname(os.path.realpath(__file__)) + '/templates')
@@ -361,4 +361,4 @@ def make_metatag_html(metadata_dict):
 
 
 if __name__ == '__main__':
-    print(view_metatag_dict_from_csw(103620))
+    print(get_view_metatag_dict_from_csw(103620))

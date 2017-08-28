@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alternates view for Dataset {{ eCatId }}</title>
+</head>
+<body>
+    <h1>Alternates view for Dataset {{ eCatId }}</h1>
+    <table>
+        <tr>
+            <th>View</th>
+            <th>Formats</th>
+        </tr>
+        <tr>
+            <td>default</td>
+            <td>ISO19115</td>
+        </tr>
+        <tr>
+            <td><a href="?_view=ISO19115">ISO19115</a></td>
+            <td><a href="?_view=ISO19115&_format=text/html">HTML</a>, <a href="?_view=ISO19115&_format=text/xml">XML</a></td>
+        </tr>
+        <tr>
+            <td><a href="?_view=staticmeta">StaticMeta</a></td>
+            <td><a href="?_view=staticmeta&_format=text/html">HTML</a></td>
+        </tr>
+        <tr>
+            <td><a href="?_view=agls">AGLS</a></td>
+            <td><a href="?_view=agls&_format=text/xml">XML</a></td>
+        </tr>
+    </table>
+</body>
+</html>
