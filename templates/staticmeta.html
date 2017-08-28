@@ -6,32 +6,32 @@
 
 		<meta name="dc.language" content="en-au" />
 		<meta name="dc.format" content="text/html" />
-        <meta name="dc.identifier" content="{{ metadata['identifier'] }}" />
-        <meta name="dcterms.title" content="{{ metadata['title'] }}" />
-		<meta name="dcterms.description" content="{{ metadata['description'] }}" />
-        <meta name="dcterms.creator" content="{{ metadata['creator'] }}" />
-		<meta name="dcterms.publisher" content="{{ metadata['publisher'] }}" />
-		<meta name="dcterms.created" content="{{ metadata['created'] }}" />
-		<meta name="dcterms.modified" content="{{ metadata['modified'] }}" />
-		<meta name="dcterms.rights" content="{{ metadata['rights'] }}" />
+        <meta name="dc.identifier" content="{{ identifier }}" />
+        <meta name="dcterms.title" content="{{ title }}" />
+		<meta name="dcterms.description" content="{{ description }}" />
+        <meta name="dcterms.creator" content="{{ creator }}" />
+		<meta name="dcterms.publisher" content="{{ publisher }}" />
+		<meta name="dcterms.created" content="{{ created }}" />
+		<meta name="dcterms.modified" content="{{ modified }}" />
+		<meta name="dcterms.rights" content="{{ rights }}" />
 
-		<meta name="keywords" content="{{ metadata['keywords'] }}">
+		<meta name="keywords" content="{{ keywords }}">
 
-		<title>{{ metadata['title'] }}</title>
+		<title>{{ title }}</title>
 	</head>
 	<body>
-        <h1>eCat Item: {{ metadata['title'] }}</h1>
+        <h1>eCat Item: {{ title }}</h1>
         <table>
             <tr><th>Metadata Element</th><th>Value</th></tr>
-            <tr><td>dcterms.description</td><td>{{ metadata['description'] }}</td></tr>
-            <tr><td>dc.identifier</td><td><a href="{{ metadata['identifier'] }}">{{ metadata['identifier'] }}</a></td></tr>
-            <tr><td>dcterms.creator</td><td>{{ metadata['creator'] }}</td></tr>
-            <tr><td>dcterms.publisher</td><td>{{ metadata['publisher'] }}</td></tr>
-            <tr><td>dcterms.created</td><td>{{ metadata['created'] }}</td></tr>
-            <tr><td>dcterms.modified</td><td>{{ metadata['modified'] }}</td></tr>
-            <tr><td>dcterms.rights</td><td>{{ metadata['rights'] }}</td></tr>
+            <tr><td>dcterms.description</td><td>{{ description }}</td></tr>
+            <tr><td>dc.identifier</td><td><a href="{{ identifier }}">{{ identifier }}</a></td></tr>
+            <tr><td>dcterms.creator</td><td>{{ creator }}</td></tr>
+            <tr><td>dcterms.publisher</td><td>{{ publisher }}</td></tr>
+            <tr><td>dcterms.created</td><td>{{ created }}</td></tr>
+            <tr><td>dcterms.modified</td><td>{{ modified }}</td></tr>
+            <tr><td>dcterms.rights</td><td>{{ rights }}</td></tr>
 
-            <tr><td>keywords</td><td>{{ metadata['keywords'] }}</td></tr>
+            <tr><td>keywords</td><td>{{ keywords }}</td></tr>
         </table>
 	</body>
 </html>
