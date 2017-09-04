@@ -66,7 +66,8 @@ def get_view_metatag_dict_from_csw(ecat_id):
         'mrl': 'http://standards.iso.org/iso/19115/-3/mrl/1.0',
         'xlink': 'http://www.w3.org/1999/xlink',
         'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-        'geonet': 'http://www.fao.org/geonetwork'
+        'geonet': 'http://www.fao.org/geonetwork',
+        'srv': 'http://standards.iso.org/iso/19115/-3/srv/2.0'
     }
 
     uuid = root.xpath(
@@ -74,7 +75,8 @@ def get_view_metatag_dict_from_csw(ecat_id):
         namespaces=namespaces)[0]
 
     title = root.xpath(
-        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()|'
+        '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
         namespaces=namespaces)[0]
 
     type = root.xpath(
@@ -82,13 +84,20 @@ def get_view_metatag_dict_from_csw(ecat_id):
         namespaces=namespaces)[0]
 
     description = root.xpath(
-        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()|'
+        '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:abstract/gco:CharacterString/text()',
         namespaces=namespaces)[0]
 
     # pointOfContact
     creators = root.xpath(
-        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
+        '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
         namespaces=namespaces)
+
+    if creators[0] == creators[1]:
+        creator = creators[0]
+    else:
+        creator = ', '.join(creators)
 
     publisher = 'Geoscience Australia'
 
@@ -108,7 +117,8 @@ def get_view_metatag_dict_from_csw(ecat_id):
         modified = datetime.datetime.strptime(modified[0], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
 
     rights_title = root.xpath(
-        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()|'
+        '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
         namespaces=namespaces)
 
     if len(rights_title) < 1:
@@ -117,7 +127,8 @@ def get_view_metatag_dict_from_csw(ecat_id):
         rights_title = rights_title[0]
 
     rights_url = root.xpath(
-        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()',
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()|'
+        '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()',
         namespaces=namespaces)
 
     if len(rights_url) < 1:
@@ -131,7 +142,8 @@ def get_view_metatag_dict_from_csw(ecat_id):
         rights = ''
 
     keywords = root.xpath(
-        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+        '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()|'
+        '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
         namespaces=namespaces)
 
     return {
@@ -140,7 +152,7 @@ def get_view_metatag_dict_from_csw(ecat_id):
         'type': type,
         'title': title,
         'description': description,
-        'creator': ', '.join(creators),
+        'creator': creator,
         'publisher': publisher,
         'created': created,
         'modified': modified,
