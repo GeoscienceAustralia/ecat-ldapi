@@ -3,7 +3,7 @@ import datetime
 import requests
 from lxml import etree
 from jinja2 import Environment, FileSystemLoader
-import config
+import _config
 
 
 def get_view_metatag_dict_from_csw(ecat_id):
@@ -43,7 +43,7 @@ def get_view_metatag_dict_from_csw(ecat_id):
         csw_uri,
         data=csw_request_xml,
         headers=headers,
-        proxies=config.PROXIES,
+        proxies=_config.PROXIES,
         verify=False
     )
 
@@ -186,7 +186,7 @@ def get_view_agls_dict_from_csw(ecat_id):
         csw_uri,
         data=csw_request_xml,
         headers=headers,
-        proxies=config.PROXIES,
+        proxies=_config.PROXIES,
         verify=False
     )
 
