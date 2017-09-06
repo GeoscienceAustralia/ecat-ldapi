@@ -1,4 +1,4 @@
-import functions
+from model import functions
 
 
 def test_make_html():

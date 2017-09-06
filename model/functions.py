@@ -367,7 +367,7 @@ def render_metatag_html(metadata_dict):
     template = Environment(
         loader=FileSystemLoader(os.path.dirname(os.path.realpath(__file__)) + '/templates')
     ) \
-        .from_string(open(os.path.dirname(os.path.realpath(__file__)) + '/templates/staticmeta.html').read())
+        .from_string(open(os.path.dirname(os.path.realpath(__file__)) + '/templates/metatag.html').read())
 
     return template.render(metadata_dict)
 

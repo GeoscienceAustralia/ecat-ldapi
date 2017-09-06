@@ -1,9 +1,9 @@
 """
 This file contains all the HTTP routes for basic pages (usually HTML)
 """
-import sys
 from flask import request, Blueprint, Response, render_template
-import functions
+
+from model import functions
 
 pages = Blueprint('routes', __name__)
 
