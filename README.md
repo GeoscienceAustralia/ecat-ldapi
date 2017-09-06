@@ -1,4 +1,4 @@
-# eCat Meta Tag Generator
+# eCat Linked Data API
 This Python Flask application is a web API that delivers very basic HTML pages with HTML meta tags based on 
 [Dublin Core elements](http://dublincore.org/documents/dces/) extracted from ISO19115-3 metadata records in XML via a 
 [Catalogue Service for the Web (CSW)](https://en.wikipedia.org/wiki/Catalog_Service_for_the_Web) service. 
