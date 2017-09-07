@@ -1,0 +1,19 @@
+{% extends "template_layout.html" %}
+
+{% block content %}
+    <h1>Dublin Core Terms view of Dataset {{ ecat_id }}</h1>
+    <table class="lined">
+        <tr>
+            <th>Element</th>
+            <th>Value</th>
+        </tr>
+        <tr><td>title</td><td>{{ title }}</td></tr>
+        <tr><td>description</td><td>{{ description }}</td></tr>
+        <tr><td>identifier</td><td><a href="{{ identifier }}">{{ identifier }}</a></td></tr>
+        <tr><td>creator</td><td>{{ creator }}</td></tr>
+        <tr><td>publisher</td><td>{{ publisher }}</td></tr>
+        <tr><td>created</td><td>{{ created }}</td></tr>
+        <tr><td>modified</td><td>{{ modified }}</td></tr>
+        <tr><td>rights</td><td>{{ rights }}</td></tr>
+    </table>
+{% endblock %}

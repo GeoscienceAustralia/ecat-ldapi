@@ -1,12 +1,12 @@
 import logging
-
-from flask import Flask
-
 import _config
-from controller.routes import pages
+from flask import Flask
+from controller import pages, classes
 
-app = Flask(__name__)
-app.register_blueprint(pages)
+app = Flask(__name__, template_folder=_config.TEMPLATES_DIR, static_folder=_config.STATIC_DIR)
+
+app.register_blueprint(pages.pages)
+app.register_blueprint(classes.classes)
 
 
 # run the Flask app

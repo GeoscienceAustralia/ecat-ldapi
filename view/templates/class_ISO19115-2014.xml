@@ -1,0 +1,8 @@
+<html>
+    <head>
+        <meta http-equiv="refresh" content="0;URL={{ dataset_uri }}?_format=text/xml">
+    </head>
+    <body>
+        <p>You are being redirected to eCat...</p>
+    </body>
+</html>

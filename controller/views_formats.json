@@ -1,0 +1,102 @@
+{
+  "_comment": [
+    "For every class in the provenance DB, we will have the following model views:",
+    "   default     -- any one of the provided views for the class, chosen as the default - usually the igsn",
+    "   alternates  -- a list of all available views and formats",
+    "   gnaf  -- the gnaf-specific view based on the GNAF Ontology",
+    ""],
+  "http://reference.data.gov.au/def/ont/dataset#Dataset": {
+    "renderer": "DataserRenderer",
+    "default": "ISO19115-2014",
+    "alternates": {
+      "mimetypes": [
+        "text/html",
+        "text/turtle",
+        "application/rdf+xml",
+        "application/rdf+json",
+        "application/json"
+
+      ],
+      "namespace": "http://www.w3.org/ns/ldp#Alternates",
+      "description": "The view listing all other views of this class of object"
+    },
+    "agls": {
+      "mimetypes": [
+        "text/turtle",
+        "application/rdf+xml",
+        "application/rdf+json",
+        "application/xml",
+        "text/xml"
+      ],
+      "namespace": "http://www.agls.gov.au/agls/1.2/",
+      "description": "Australian Government Locator Service (AGLS) metadata schema. Published as Australian Standard AS 5044-2010"
+    },
+    "agrkms": {
+      "mimetypes": [
+        "application/xml"
+      ],
+      "namespace": "http://www.naa.gov.au/information-management/managing-information-and-records/describing/metadata/AGRKMS/index.aspx",
+      "description": "Australian Government Recordkeeping Metadata Standard (AGRkMS). Published by the National Archives of Australia"
+    },
+    "agrif": {
+      "mimetypes": [
+        "text/turtle",
+        "application/rdf+xml",
+        "application/rdf+json"
+      ],
+      "namespace": "http://reference.data.gov.au/def/ont/agrif",
+      "description": "Australian Government Records Interoperability Framework (AGRIF). OWL Ontology published by the Department of Finance of Australia"
+    },
+    "dataset": {
+      "mimetypes": [
+        "text/turtle",
+        "application/rdf+xml",
+        "application/rdf+json"
+      ],
+      "namespace": "http://reference.data.gov.au/def/ont/dataset",
+      "description": "The Dataset Ontology from the Australian Government Linked Data Working Group"
+    },
+    "dct": {
+      "mimetypes": [
+        "text/html",
+        "text/turtle",
+        "application/rdf+xml",
+        "application/rdf+json",
+        "application/xml",
+        "text/xml"
+      ],
+      "namespace": "http://purl.org/dc/terms/",
+      "description": "Dublin Core Terms from the Dublin Core Metadata Initiative"
+    },
+    "ISO19115-2014": {
+      "mimetypes": [
+        "text/html",
+        "application/xml",
+        "text/xml"
+      ],
+      "namespace": "http://def.isotc211.org/iso19115/-1/2014/",
+      "description": "ISO's standard 19115 for Geographic Metadata, 2014 edition"
+    },
+    "metatag": {
+      "mimetypes": [
+        "text/html"
+      ],
+      "namespace": "http://pid.geoscience.gov.au/def/ont/metatag",
+      "description": "GA's rendering of mainly Dublin Core elements in HTML for search bot indexing"
+    }
+  },
+  "http://purl.org/linked-data/registry#Register":{
+    "renderer": "RegisterRenderer",
+    "default": "reg",
+    "alternates": {
+      "mimetypes": ["text/html", "text/turtle", "application/rdf+xml", "application/rdf+json"],
+      "namespace": "http://www.w3.org/ns/ldp#Alternates",
+      "description": "The view listing all other views of this class of object"
+    },
+    "reg": {
+      "mimetypes": ["text/html", "text/turtle", "application/rdf+xml", "application/rdf+json"],
+      "namespace": "http://purl.org/linked-data/registry#",
+      "description": "The Registry Ontology. Core ontology for linked data registry services. Based on ISO19135 but heavily modified to suit Linked Data representations and applications"
+    }
+  }
+}

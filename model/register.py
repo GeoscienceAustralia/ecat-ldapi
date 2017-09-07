@@ -3,8 +3,9 @@ from flask import Response, render_template
 from rdflib import Graph, URIRef, RDF, RDFS, XSD, Namespace, Literal
 from _ldapi import LDAPI
 import _config as config
-import psycopg2
-from psycopg2 import sql
+import requests
+import xml.sax as x
+import os
 
 
 class RegisterRenderer(Renderer):
@@ -19,7 +20,39 @@ class RegisterRenderer(Renderer):
         self.page = page
         self.last_page_no = last_page_no
 
-        self._get_data_from_db(page, per_page)
+        self._get_data_from_csw(page, per_page)
+
+    def _get_data_from_csw(self, page, per_page):
+        # make a CSW request for 100 items
+        request_xml = self._make_csw_request_xml(page, per_page)
+        self.register = self._extract_ecat_ids_stream(self._stream_csw_request(config.DATASETS_CSW_ENDPOINT, request_xml))
+
+    def _stream_csw_request(self, csw_endpoint, request_xml):
+        r = requests.post(csw_endpoint,
+                          data=request_xml,
+                          headers={'Content-Type': 'application/xml'},
+                          stream=True)
+        return r.raw
+
+    def _make_csw_request_xml(self, start_position, max_records):
+        xml_template_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+            'view',
+            'templates',
+            'csw_request_records.xml')
+        xml = open(xml_template_path, 'r').read()
+        xml = xml.replace('{{ start_position }}', str(start_position))
+        xml = xml.replace('{{ max_records }}', str(max_records))
+        return xml
+
+    def _extract_ecat_ids_stream(self, result_stream):
+        n = IdHandler()
+        parser = x.make_parser()
+        parser.setContentHandler(n)
+        parser.setFeature(x.handler.feature_namespaces, True)
+        parser.parse(result_stream)
+
+        return sorted(n.ids)
 
     def render(self, view, mimetype, extra_headers=None):
         if view == 'reg':
@@ -39,6 +72,7 @@ class RegisterRenderer(Renderer):
                     render_template(
                         'class_register.html',
                         class_name=self.uri,
+                        instance_uri_base=config.URI_DATASET_INSTANCE_BASE,
                         register=self.register
                     ),
                     mimetype='text/html',
@@ -46,33 +80,6 @@ class RegisterRenderer(Renderer):
                 )
         else:
             return Response('The requested model model is not valid for this class', status=400, mimetype='text/plain')
-
-    def _get_data_from_db(self, page, per_page):
-        try:
-            connect_str = "host='{}' dbname='{}' user='{}' password='{}'"\
-                .format(
-                    config.DB_HOST,
-                    config.DB_DBNAME,
-                    config.DB_USR,
-                    config.DB_PWD
-                )
-            conn = psycopg2.connect(connect_str)
-            cursor = conn.cursor()
-            # get just IDs, ordered, from the address_detail table, paginated by class init args
-            id_query = sql.SQL('''
-                SELECT address_detail_pid
-                FROM {dbschema}.address_detail
-                ORDER BY address_detail_pid
-                LIMIT {limit}
-                OFFSET {offset}
-                ''').format(dbschema=sql.Identifier(config.DB_SCHEMA), limit=sql.Literal(per_page), offset=sql.Literal((page - 1) * per_page))
-            cursor.execute(id_query)
-            rows = cursor.fetchall()
-            for row in rows:
-                self.register.append(row[0])
-        except Exception as e:
-            print("Uh oh, can't connect to DB. Invalid dbname, user or password?")
-            print(e)
 
     def _make_reg_graph(self, model_view):
         self.g = Graph()
@@ -125,3 +132,59 @@ class RegisterRenderer(Renderer):
                 self.g.add((item_uri, RDF.type, URIRef(self.uri)))
                 self.g.add((item_uri, RDFS.label, Literal('Address ID:' + item, datatype=XSD.string)))
                 self.g.add((item_uri, REG.register, page_uri))
+
+
+class IdHandler(x.ContentHandler):
+    # see http://python.zirael.org/e-sax2.html
+    def __init__(self):
+        x.ContentHandler.__init__(self)
+        self.ids = []
+        self.one = False
+        self.two = False
+        self.three = False
+        self.four = False
+        self.five = False
+        self.six = False
+        self.seven = False
+        self.parent = []
+
+    # check for a particular sequence of tags:
+    # identificationInfo SV_ServiceIdentification citation CI_Citation identifier RS_Identifier code CharacterString
+    # this is similar to an XPath query but this function notices every start tag, not just those in the hierarchy
+    # above, also anything else in between
+    def startElementNS(self, name, qname, attrs):
+        uri, localname = name
+        # //mdb:MD_Metadata/mdb:alternativeMetadataReference/cit:CI_Citation/cit:identifier/mcc:MD_Identifier/mcc:code/gco:CharacterString/text()
+        if localname == 'MD_Metadata':
+            self.one = True
+        if self.one and localname == 'alternativeMetadataReference':
+            self.two = True
+        if self.two and localname == 'CI_Citation':
+            self.three = True
+        if self.three and localname == 'identifier':
+            self.four = True
+        if self.four and localname == 'MD_Identifier':
+            self.five = True
+        if self.five and localname == 'code':
+            self.six = True
+        if self.six and localname == 'CharacterString':
+            self.seven = True
+
+    # if the required sequence of start tags is true (all 7 flags are True), record the content
+    def characters(self, content):
+        if self.one and self.two and self.three and self.four and self.five and self.six and self.seven:
+            try:
+                self.ids.append(int(content))
+            except Exception:
+                pass
+
+    # once an eCat ID has been found, reset the stream checker
+    def endElementNS(self, name, qname):
+        if self.one and self.two and self.three and self.four and self.five and self.six and self.seven:
+            self.one = False
+            self.two = False
+            self.three = False
+            self.four = False
+            self.five = False
+            self.six = False
+            self.seven = False

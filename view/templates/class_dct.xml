@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<metadata
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <dcterms:identifier>{{ uri }}</dcterms:identifier>
+    <dcterms:title xml:lang="en-AU">{{ title }}</dcterms:title>
+    <dcterms:created xsi:type="xsd:dateTime">{{ created }}</dcterms:created>
+    <dcterms:modified xsi:type="xsd:dateTime">{{ modified }}</dcterms:modified>
+    <dcterms:creator>{{ creator }}</dcterms:creator>
+    <dcterms:publisher>{{ publisher }}</dcterms:publisher>
+    {% for subject in subjects %}
+    <dcterms:subject>{{ subject }}</dcterms:subject>
+    {% endfor %}
+    <dcterms:description xml:lang="en-AU">{{ description }}</dcterms:description>
+    <dcterms:audience>{{ audience }}</dcterms:audience>
+</metadata>
