@@ -17,6 +17,7 @@
         "application/json"
 
       ],
+      "default_mimetype": "text/html",
       "namespace": "http://www.w3.org/ns/ldp#Alternates",
       "description": "The view listing all other views of this class of object"
     },
@@ -28,6 +29,7 @@
         "application/xml",
         "text/xml"
       ],
+      "default_mimetype": "application/xml",
       "namespace": "http://www.agls.gov.au/agls/1.2/",
       "description": "Australian Government Locator Service (AGLS) metadata schema. Published as Australian Standard AS 5044-2010"
     },
@@ -35,6 +37,7 @@
       "mimetypes": [
         "application/xml"
       ],
+      "default_mimetype": "application/xml",
       "namespace": "http://www.naa.gov.au/information-management/managing-information-and-records/describing/metadata/AGRKMS/index.aspx",
       "description": "Australian Government Recordkeeping Metadata Standard (AGRkMS). Published by the National Archives of Australia"
     },
@@ -44,6 +47,7 @@
         "application/rdf+xml",
         "application/rdf+json"
       ],
+      "default_mimetype": "text/turtle",
       "namespace": "http://reference.data.gov.au/def/ont/agrif",
       "description": "Australian Government Records Interoperability Framework (AGRIF). OWL Ontology published by the Department of Finance of Australia"
     },
@@ -53,6 +57,7 @@
         "application/rdf+xml",
         "application/rdf+json"
       ],
+      "default_mimetype": "text/turtle",
       "namespace": "http://reference.data.gov.au/def/ont/dataset",
       "description": "The Dataset Ontology from the Australian Government Linked Data Working Group"
     },
@@ -65,6 +70,7 @@
         "application/xml",
         "text/xml"
       ],
+      "default_mimetype": "text/turtle",
       "namespace": "http://purl.org/dc/terms/",
       "description": "Dublin Core Terms from the Dublin Core Metadata Initiative"
     },
@@ -74,6 +80,7 @@
         "application/xml",
         "text/xml"
       ],
+      "default_mimetype": "text/html",
       "namespace": "http://def.isotc211.org/iso19115/-1/2014/",
       "description": "ISO's standard 19115 for Geographic Metadata, 2014 edition"
     },
@@ -81,6 +88,7 @@
       "mimetypes": [
         "text/html"
       ],
+      "default_mimetype": "text/html",
       "namespace": "http://pid.geoscience.gov.au/def/ont/metatag",
       "description": "GA's rendering of mainly Dublin Core elements in HTML for search bot indexing"
     }
@@ -90,11 +98,13 @@
     "default": "reg",
     "alternates": {
       "mimetypes": ["text/html", "text/turtle", "application/rdf+xml", "application/rdf+json"],
+      "default_mimetype": "text/html",
       "namespace": "http://www.w3.org/ns/ldp#Alternates",
       "description": "The view listing all other views of this class of object"
     },
     "reg": {
       "mimetypes": ["text/html", "text/turtle", "application/rdf+xml", "application/rdf+json"],
+      "default_mimetype": "text/html",
       "namespace": "http://purl.org/linked-data/registry#",
       "description": "The Registry Ontology. Core ontology for linked data registry services. Based on ISO19135 but heavily modified to suit Linked Data representations and applications"
     }

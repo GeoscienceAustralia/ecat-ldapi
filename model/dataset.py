@@ -126,8 +126,7 @@ class DatasetRenderer(Renderer):
         return etree.parse(file_name)
 
     def _get_agls_dict_from_csw_xml(self):
-        #root = self._get_xml_from_csw()
-        root = self._get_xml_from_file('/Users/car587/work/ecat-ldapi/103620.xml')
+        root = self._get_xml_from_csw()
 
         # XPath to all the vars we want
         namespaces = {
@@ -338,6 +337,65 @@ class DatasetRenderer(Renderer):
             '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
+        '''
+        <mdb:metadataScope>
+            <mdb:MD_MetadataScope>
+                <mdb:resourceScope>
+                    <mcc:MD_ScopeCode codeList="codeListLocation#MD_ScopeCode" codeListValue="dataset" />
+        '''
+        scope_code = root.xpath(
+            '//mcc:MD_ScopeCode/@codeListValue',
+            namespaces=namespaces)[0]
+        if scope_code == 'dataset':
+            '''
+            <mdb:identificationInfo>
+                <mri:MD_DataIdentification>
+                    <mri:extent>
+                        <gex:EX_Extent>
+                            <gex:geographicElement>
+                                <gex:EX_GeographicBoundingBox>
+                                    <gex:westBoundLongitude>
+                                        <gco:Decimal>109.100234</gco:Decimal>
+                                    </gex:westBoundLongitude>
+                                    <gex:eastBoundLongitude>
+                                        <gco:Decimal>156.741882</gco:Decimal>
+                                    </gex:eastBoundLongitude>
+                                    <gex:southBoundLatitude>
+                                        <gco:Decimal>-44.204934</gco:Decimal>
+                                    </gex:southBoundLatitude>
+                                    <gex:northBoundLatitude>
+                                        <gco:Decimal>-9.354948</gco:Decimal>
+                                    </gex:northBoundLatitude>
+            '''
+            west = root.xpath(
+                '//gex:EX_GeographicBoundingBox/gex:westBoundLongitude/gco:Decimal/text()',
+                namespaces=namespaces)[0]
+
+            east = root.xpath(
+                '//gex:EX_GeographicBoundingBox/gex:eastBoundLongitude/gco:Decimal/text()',
+                namespaces=namespaces)[0]
+
+            south = root.xpath(
+                '//gex:EX_GeographicBoundingBox/gex:southBoundLatitude/gco:Decimal/text()',
+                namespaces=namespaces)[0]
+
+            north = root.xpath(
+                '//gex:EX_GeographicBoundingBox/gex:northBoundLatitude/gco:Decimal/text()',
+                namespaces=namespaces)[0]
+
+            # SRID=8311;POLYGON((140 -32.57, 141 -32.57, 141 -33.08, 141 -33.08, 140 -32.57))
+            if west and east and south and north:
+                coverage = 'SRID=8311;POLYGON(({west} {north}, {east} {north}, {east} {south}, {east} {south}, {west} {north}))'.format(
+                    west=west,
+                    east=east,
+                    south=south,
+                    north=north
+                )
+            else:
+                coverage = None
+        else:
+            coverage = None
+
         audience = 'audience x'
 
         '''
@@ -357,15 +415,13 @@ class DatasetRenderer(Renderer):
 
         '''
         digital_artefacts = root.xpath(
-            '//mdb:MD_Metadata/mdb:distributionInfo/mrd:MD_Distribution/mrd:distributionFormat/mrd:MD_Format/mrd:formatDistributor/mrd:MD_Distributor/mrd:distributorTransferOptions/mrd:MD_DigitalTransferOptions/mrd:onLine/cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()',
+            '//cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()',
             namespaces=namespaces)
 
         if len(digital_artefacts) > 0:
             digital_artefact = digital_artefacts[0]
         else:
             digital_artefact = None
-
-
 
         return {
             'identifier': _config.URI_DATASET_INSTANCE_BASE + str(self.id),
@@ -377,7 +433,8 @@ class DatasetRenderer(Renderer):
             'subjects': subjects,
             'description': description,
             'audience': audience,
-            'digital_artefact': digital_artefact
+            'digital_artefact': digital_artefact,
+            'coverage': coverage
         }
 
     def _render_agrif_rdf(self, metadata_dict, format):
@@ -427,8 +484,8 @@ class DatasetRenderer(Renderer):
             geometry,
             GEO.asWKT,
             Literal(
-                'SRID=8311;POLYGON((140 -32.57, 141 -32.57, 141 -33.08, 141 -33.08, 140 -32.57))',
-            datatype=GEO.wktLiteral)
+                metadata_dict['coverage'],
+                datatype=GEO.wktLiteral)
         ))
         coverage = BNode()
         g.add((coverage, RDF.type, AGRIF.SpatialCoverage))
@@ -438,8 +495,6 @@ class DatasetRenderer(Renderer):
         # Digital Artefact
         if metadata_dict.get('digital_artefact') is not None:
             g.add((this_record, AGRIF.recordOf, URIRef(metadata_dict['digital_artefact'])))
-
-
 
         return g.serialize(format=LDAPI.get_rdf_parser_for_mimetype(format))
 
