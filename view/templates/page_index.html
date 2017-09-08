@@ -1,11 +1,73 @@
 {% extends "template_layout.html" %}
 
 {% block content %}
-    <h1>Dataset Linked Data API</h1>
-    <h2>Home page</h2>
-    <p>This Linked Data API is currently in test. For the authoritative listing of GA's datasets and publications, please see eCat, GA's main Dataset and Products catalogue:</p>
+    <h1>Dataset Register</h1>
+    <h2>Linked Data API</h2>
+    <p>This Linked Data API presents multiple model views and formats for Geoscience Australia's datasets as managed within our eCat Catalogu. Thi system is currently in <span style="font-weight:bold; font-style:italic; color:red;">test</span>.</p>
+    <p>For the authoritative listing of GA's datasets and publications, please see eCat:</p>
     <ul>
         <li><a href="https://ecat.ga.gov.au/geonetwork/">eCat Catalogue</a></li>
     </ul>
-    <p>To access GA dataset and publications using Linked Data (again, this is still in test) use the links above.</p>
+    <h3>Test Use</h3>
+    <p>To use this Linked Data API, follow the links below for examples of different model views and formats of the objects it delivers:</p>
+    <ul>
+        <li>
+            <strong>Dataset 76068</strong> - <em>a single Dataset, Isostatic Residual Gravity Anomaly Grid of Onshore Australia - 2011</em>
+            <ul>
+                <li>
+                    <a href="{{ url_for('classes.dataset', dataset_id=76068) }}?_view=ISO19115-2014">ISO19115-1:2014 view, in HTML</a>
+                    <ul>
+                        <li>This web page view of the deataset's metadata, according to the <a href="https://www.iso.org/standard/53798.html">ISO19115-1:2014 Geographic Information -- Metadata</a> schema redirects, to the dataset's homepage in eCat where the view is provided by the <a href="http://geonetwork-opensource.org/">GeoNetwork</a> catalogue software that GA uses.</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('classes.dataset', dataset_id=76068) }}?_view=ISO19115-2014&_format=application/xml">ISO19115:2014-1 view, in XML</a>
+                    <ul>
+                        <li>This is the machine-readable, XML format of the ISO19115:2014 Geographic Information -- Metadata schema, serialised according to the <a href="https://www.iso.org/standard/32579.html">ISO19115-3:2016 Geographic information -- Metadata -- Part 3: XML schema implementation for fundamental concepts</a>. This view &amp; format is also provided by eCat's GeoNetwork catalogue software.</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('classes.dataset', dataset_id=76068) }}?_view=alternates">Alternates view, in HTML</a>
+                    <ul>
+                        <li>This is the view that lists all other views and formats. This view is available in HTML (for humans) and a range of machine-readable formats and includes an extended version of this list of views and formats. An alternates view is available for every Linked Data class (here: Dataset &amp; Register).</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('classes.dataset', dataset_id=76068) }}?_view=agrif">AGRIF view, in RDF (turtle)</a>
+                    <ul>
+                        <li>This is the view of this dataset as a Record, accrding to the <a href="http://reference.data.gov.au/def/ont/agrif">AGRIF ontology</a>. It is delivered in machine-readable RDF formats only.</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('classes.dataset', dataset_id=76068) }}?_view=agls">AGLS view, in XML</a>
+                    <ul>
+                        <li>This is the National Archive's <a href="http://www.agls.gov.au">AGLS</a> view of the dataset. AGLS is "improve visibility and availability of online resources". This view is essentially <a href="http://dublincore.org/documents/dcmi-terms/">Dublin Core Terms</a> with some additions. It is available in XML and RDF machine-readable formats only.</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <strong>Register</strong> - <em>the list of datasets</em>
+            <ul>
+                <li>
+                    <a href="{{ url_for('classes.datasets') }}?_view=reg">Registry view, in HTML</a>
+                    <ul>
+                        <li>A basic web page list of the items in this register (Datasets) with information about how to page through the list.</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('classes.datasets') }}?_view=reg">Registry view, in RDF (turtle)</a>
+                    <ul>
+                        <li>A simple list view of the Datasets Register according to the <a href="http://epimorphics.com/public/vocabulary/Registry.html">Registry ontology</a>. A very simple of a register with contained items. Useful for Linked Data applications to find all the individuals in a register. Can be paginated by a machine.</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('classes.datasets') }}?_view=alternates">Alternates view, in HTML</a>
+                    <ul>
+                        <li>This is the view that lists all other views and formats.</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
 {% endblock %}
