@@ -1,13 +1,11 @@
-<html>
-    <head>
-        <title>GA's Dataset LDAPI</title>
-    </head>
-    <body>
-        <h1>Geoscience Australia's Dataset Linked Data API</h1>
-        <h2>Application Programming Interface</h2>
-        <p>API endpoints for this Linked Data API are:</p>
-        <ul>
-            <li><a href="{{ url_for('classes.datasets') }}">{{ url_for('classes.datasets') }}</a> - register of Dataset objects</li>
-        </ul>
-    </body>
-</html>
+{% extends "template_layout.html" %}
+
+{% block content %}
+    <h1>Dataset Register Linked Data API</h1>
+    <h2>Application Programming Interface</h2>
+    <p>API endpoints for this Linked Data API are:</p>
+    <ul>
+        <li><a href="{{ url_for('classes.datasets') }}">{{ url_for('classes.datasets') }}</a> - register of Dataset objects</li>
+        <li><a href="{{ url_for('classes.dataset', dataset_id=103620) }}">{{ url_for('classes.dataset', dataset_id=103620) }}</a> - a single Dataset (example: Dataset 103620)</li>
+    </ul>
+{% endblock %}

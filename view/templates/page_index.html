@@ -1,14 +1,17 @@
 {% extends "template_layout.html" %}
 
 {% block content %}
-    <h1>Dataset Register</h1>
-    <h2>Linked Data API</h2>
+    <h1>Dataset Register Linked Data API</h1>
+    <h2>Home</h2>
     <p>This Linked Data API presents multiple model views and formats for Geoscience Australia's datasets as managed within our eCat Catalogue. This system is currently in <span style="font-weight:bold; font-style:italic; color:red;">test</span> and most of the views below are incomplete.</p>
     <p>For the authoritative listing of GA's datasets and publications, please see eCat:</p>
     <ul>
         <li><a href="https://ecat.ga.gov.au/geonetwork/">eCat Catalogue</a></li>
     </ul>
-    <h3>Test Use</h3>
+    <h3>Documentation</h3>
+    <p>The way this Linked Data API works and the various endpoints for it are described on the <a href="{{ url_for('pages.documentation') }}">Documentation</a> and <a href="{{ url_for('pages.api') }}">API</a> pages, linked to above. Also, there are a series of example endpoints with descriptions given below.</p>
+    <p>For further information, contact the GA team that manage this system via the <a href="{{ url_for('pages.about') }}">About</a> page.</p>
+    <h3>Examples</h3>
     <p>To use this Linked Data API, follow the links below for examples of different model views and formats of the objects it delivers:</p>
     <ul>
         <li>

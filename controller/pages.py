@@ -19,3 +19,16 @@ def api():
     return render_template(
         'page_api.html'
     )
+
+
+@pages.route('/about')
+def about():
+    return render_template(
+        'page_about.html'
+    )
+
+@pages.route('/documentation')
+def documentation():
+    return render_template(
+        'page_documentation.html'
+    )
