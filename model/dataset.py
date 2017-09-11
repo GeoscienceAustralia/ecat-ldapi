@@ -240,7 +240,7 @@ class DatasetRenderer(Renderer):
             '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
 
-        publisher = 'Geoscience Australia'
+        publisher = 'corporateName=Geoscience Australia; address=Cnr Jerrabomberra Ave and Hindmarsh Dr GPO Box 378 Canberra ACT Australia 2601; contact=02 6249 9966; email=clientservices@ga.gov.au'
 
         subjects = root.xpath(
             '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
@@ -252,27 +252,38 @@ class DatasetRenderer(Renderer):
 
         category = 'category x'
 
-        serviceType = 'service type x'
+        # TODO: replace with better AGIFT terms
+        function = 'Natural Resources'
 
-        function = 'function x'
+        # <dcterms:audience xsi:type="aglsterms:agls-audience">all</dcterms:audience>
+        audience = 'all'
 
-        audience = 'audience x'
+        # <aglsterms:availability xsi:type="aglsterms:AglsAgent"> corporateName=National Archives of Australia; address=Box 7425 Canberra Business Centre ACT 2610; contact=National Reference Service, 1300 886 881; email=ref@naa.gov.au; cost=AU$25.00 (inc GST) for purchases within Australia, AU$28.00 (GST free) for purchases outside Australia </aglsterms:availability>
+        availability = publisher + '; cost=free'
 
-        availability = 'availability x'
+        # '<dcterms:coverage xsi:type="aglsterms:AglsJuri">South Australia</dcterms:coverage>'
+        jurisdiction = 'Australia'
 
+        source = root.xpath(
+            '//mrl:LI_Lineage/mrl:statement/gco:CharacterString/text()',
+            namespaces=namespaces)[0]
+
+        #     <aglsterms:serviceType xsi:type="aglsterms:agls-service">{{ serviceType }}</aglsterms:serviceType>
         return {
             'identifier': str(self.id),
             'title': title,
             'modified': modified,
-            'creator': '; '.join(creators),
+            'creators': creators,
             'publisher': publisher,
-            'subject': '; '.join(subjects),
+            'subjects': subjects,
             'description': description,
             'category': category,
-            'serviceType': serviceType,
+            # 'serviceType': serviceType,
             'function': function,
             'audience': audience,
-            'availability': availability
+            'availability': availability,
+            'jurisdiction': jurisdiction,
+            'source': source
         }
 
     def _render_agls_xml(self, metadata_dict):
