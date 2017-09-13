@@ -15,7 +15,6 @@
         "application/rdf+xml",
         "application/rdf+json",
         "application/json"
-
       ],
       "default_mimetype": "text/html",
       "namespace": "http://www.w3.org/ns/ldp#Alternates",

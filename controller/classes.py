@@ -152,7 +152,7 @@ def dataset(dataset_id):
                 s = DatasetRenderer(dataset_id)
                 return s.render(view, mimetype)
             except ValueError:
-                return render_template('dataset_no_record.html')
+                return render_template('class_dataset_no_record.html')
 
     except LdapiParameterError as e:
         return client_error_Response(str(e))
