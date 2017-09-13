@@ -42,8 +42,7 @@ p, li {
 	padding: 0.2em 0 0.9em
 }
 
-p a,
-ul li a {
+a {
 	color: #0f4a84;
 }
 

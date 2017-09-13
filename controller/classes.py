@@ -63,44 +63,52 @@ def datasets():
 
             # if this isn't the first page, add a link to "prev"
             if page != 1:
+                prev_page = page - 1
                 links.append('<{}?per_page={}&page={}>; rel="prev"'.format(
                     config.URI_DATASET_INSTANCE_BASE,
                     per_page,
-                    (page - 1)
+                    prev_page
                 ))
+            else:
+                prev_page = None
 
             # add a link to "next" and "last"
             try:
                 no_of_objects = 9200  # TODO replace this magic number
-                last_page_no = int(round(no_of_objects / per_page, 0)) + 1  # same as math.ceil()
+                last_page = int(round(no_of_objects / per_page, 0)) + 1  # same as math.ceil()
 
                 # if we've gotten the last page value successfully, we can choke if someone enters a larger value
-                if page > last_page_no:
+                if page > last_page:
                     return Response(
                         'You must enter either no value for page or an integer <= {} which is the last page number.'
-                            .format(last_page_no),
+                            .format(last_page),
                         status=400,
                         mimetype='text/plain'
                     )
 
                 # add a link to "next"
-                if page != last_page_no:
+                if page != last_page:
+                    next_page = page + 1
                     links.append(
-                        '<{}?per_page={}&page={}>; rel="next"'.format(config.URI_DATASET_INSTANCE_BASE, per_page, (page + 1)))
+                        '<{}?per_page={}&page={}>; rel="next"'.format(config.URI_DATASET_INSTANCE_BASE, per_page, next_page))
+                else:
+                    next_page = None
 
                 # add a link to "last"
                 links.append(
-                    '<{}?per_page={}&page={}>; rel="last"'.format(config.URI_DATASET_INSTANCE_BASE, per_page, last_page_no))
+                    '<{}?per_page={}&page={}>; rel="last"'.format(config.URI_DATASET_INSTANCE_BASE, per_page, last_page))
             except:
                 # if there's some error in getting the no of object, add the "next" link but not the "last" link
+                next_page = page + 1
                 links.append(
-                    '<{}?per_page={}&page={}>; rel="next"'.format(config.URI_DATASET_INSTANCE_BASE, per_page, (page + 1)))
+                    '<{}?per_page={}&page={}>; rel="next"'.format(config.URI_DATASET_INSTANCE_BASE, per_page, next_page))
 
             headers = {
                 'Link': ', '.join(links)
             }
 
-            return register.RegisterRenderer(request, class_uri, None, page, per_page, last_page_no) \
+            class_uri_of_register_items = 'http://reference.data.gov.au/def/ont/dataset#Dataset'
+            return register.RegisterRenderer(request, class_uri_of_register_items, None, page, per_page, prev_page, next_page, last_page) \
                 .render(view, mime_format, extra_headers=headers)
 
     except LdapiParameterError as e:
