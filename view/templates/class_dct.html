@@ -1,8 +1,9 @@
 {% extends "page_layout.html" %}
 
 {% block content %}
-    <h1>Dublin Core Terms view of Dataset {{ ecat_id }}</h1>
-    <table class="lined">
+    <h1>Dublin Core Terms view</h1>
+    <h2>Of Dataset {{ ecat_id }}</h2>
+    <table class="pretty">
         <tr>
             <th>Element</th>
             <th>Value</th>
@@ -16,4 +17,12 @@
         <tr><td>modified</td><td>{{ modified }}</td></tr>
         <tr><td>rights</td><td>{{ rights }}</td></tr>
     </table>
+
+    <h2>Other views</h2>
+    <p>Other views of this Sample are listed in the <a href="{{ url_for('classes.dataset', dataset_id=identifier) }}?_view=alternates">Alternates View</a>.</p>
+    <h2>Citation</h2>
+    <p>If you wish to cite this dataset as you would a publication, please use the following format:</p>
+    <code style="display:block; margin: 0 5em 0 5em;">
+        {{ creator }} ({{ created[:4] }}) "Geoscience Australia Dataset {{ identifier.split('/')[-1] }}". Accessed {{ date_now }}. <a href="{{ identifier }}">{{ identifier }}</a>
+    </code>
 {% endblock %}

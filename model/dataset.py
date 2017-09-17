@@ -561,16 +561,22 @@ class DatasetRenderer(Renderer):
 
         audience = 'audience x'
 
+        license = root.xpath(
+            '//mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            namespaces=namespaces)[0]
+
         return {
             'identifier': _config.URI_DATASET_INSTANCE_BASE + str(self.id),
             'title': title,
-            'created': created,
-            'modified': modified,
+            'created': created[:10],
+            'modified': modified[:10],
             'creator': '; '.join(creators),
             'publisher': publisher,
             'subjects': subjects,
             'description': description,
-            'audience': audience
+            'audience': audience,
+            'rights': license,
+            'date_now': datetime.datetime.now().strftime('%d %B %Y')
         }
 
     def _render_dct_xml(self, metadata_dict):
