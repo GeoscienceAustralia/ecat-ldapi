@@ -12,4 +12,4 @@ PROXIES = {}
 DATASETS_CSW_ENDPOINT = 'https://ecat.ga.gov.au/geonetwork/srv/eng/csw'
 
 URI_DATASET_CLASS = 'http://reference.data.gov.au/def/ont/dataset#Dataset'
-URI_DATASET_INSTANCE_BASE = 'http://pid.geoscience.gov.au/id/dataset/ga/'
+URI_DATASET_INSTANCE_BASE = 'http://pid.geoscience.gov.au/dataset/ga/'
