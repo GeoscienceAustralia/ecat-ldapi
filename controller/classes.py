@@ -10,7 +10,7 @@ import urllib.parse as uparse
 classes = Blueprint('classes', __name__)
 
 
-@classes.route('/doc/dataset/ga/')
+@classes.route('/dataset/ga/')
 def datasets():
     """
     Register of all Datasets
@@ -115,7 +115,7 @@ def datasets():
         return client_error_Response(str(e))
 
 
-@classes.route('/doc/dataset/ga/<string:dataset_id>')
+@classes.route('/dataset/ga/<string:dataset_id>')
 def dataset(dataset_id):
     """
     A single Address

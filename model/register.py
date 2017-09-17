@@ -1,5 +1,5 @@
 from .renderer import Renderer
-from flask import Response, render_template
+from flask import Response, render_template, send_file
 from rdflib import Graph, URIRef, RDF, RDFS, XSD, Namespace, Literal
 from _ldapi import LDAPI
 import _config as config
@@ -85,6 +85,13 @@ class RegisterRenderer(Renderer):
                     mimetype='text/html',
                     headers=extra_headers
                 )
+        elif view == 'staticreg':
+            if mimetype in LDAPI.get_rdf_mimetypes_list():
+                pass
+            elif mimetype == 'text/html':
+                return send_file('/var/www/html/datasets.html')
+        elif view == 'metatag':
+            return send_file('/var/www/html/datasets-metatag.html')
         else:
             return Response('The requested model model is not valid for this class', status=400, mimetype='text/plain')
 
