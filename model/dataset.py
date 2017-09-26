@@ -667,8 +667,10 @@ class DatasetRenderer(Renderer):
                 creator = creators[0]
             else:
                 creator = ', '.join(creators)
-        else:
+        elif len(creators) == 1:
             creator = creators[0]
+        else:
+            creator = ''
 
         publisher = 'Geoscience Australia'
 
