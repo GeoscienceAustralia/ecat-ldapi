@@ -100,3 +100,6 @@ ENV/
 
 # virtualenv
 python/
+
+# Mac
+.DS_Store
