@@ -50,6 +50,15 @@
       "namespace": "http://reference.data.gov.au/def/ont/agrif",
       "description": "Australian Government Records Interoperability Framework (AGRIF). OWL Ontology published by the Department of Finance of Australia"
     },
+    "apa": {
+      "mimetypes": [
+        "text/plain",
+        "application/json"
+      ],
+      "default_mimetype": "text/plain",
+      "namespace": "https://github.com/citation-style-language/styles/blob/master/apa.csl",
+      "description": "The American Psychological Association 6th edition citation format"
+    },
     "dataset": {
       "mimetypes": [
         "text/turtle",

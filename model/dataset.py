@@ -17,7 +17,9 @@ class DatasetRenderer(Renderer):
         self.id = id
 
     def render(self, view, format):
-        if format == 'text/html':
+        if view == 'apa':
+            return Response(self.export_apa(format), mimetype=format)
+        elif format == 'text/html':
             return Response(self.export_html(view), mimetype=format)
         elif format == 'text/xml' or format == 'application/xml':
             if view == 'ISO19115-2014':
@@ -763,3 +765,80 @@ class DatasetRenderer(Renderer):
         template = Environment(loader=FileSystemLoader(_config.TEMPLATES_DIR)).from_string(template_file)
 
         return template.render(**metadata_dict)
+
+    def export_apa(self, format):
+        root = self._get_xml_from_csw()
+
+        # XPath to all the vars we want
+        namespaces = {
+            'mdb': 'http://standards.iso.org/iso/19115/-3/mdb/1.0',
+            'cit': 'http://standards.iso.org/iso/19115/-3/cit/1.0',
+            'gco': 'http://standards.iso.org/iso/19115/-3/gco/1.0',
+            'gcx': 'http://standards.iso.org/iso/19115/-3/gcx/1.0',
+            'gex': 'http://standards.iso.org/iso/19115/-3/gex/1.0',
+            'gml': 'http://www.opengis.net/gml/3.2',
+            'lan': 'http://standards.iso.org/iso/19115/-3/lan/1.0',
+            'mcc': 'http://standards.iso.org/iso/19115/-3/mcc/1.0',
+            'mco': 'http://standards.iso.org/iso/19115/-3/mco/1.0',
+            'mmi': 'http://standards.iso.org/iso/19115/-3/mmi/1.0',
+            'mrd': 'http://standards.iso.org/iso/19115/-3/mrd/1.0',
+            'mri': 'http://standards.iso.org/iso/19115/-3/mri/1.0',
+            'mrl': 'http://standards.iso.org/iso/19115/-3/mrl/1.0',
+            'xlink': 'http://www.w3.org/1999/xlink',
+            'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            'geonet': 'http://www.fao.org/geonetwork',
+            'srv': 'http://standards.iso.org/iso/19115/-3/srv/2.0'
+        }
+
+        title = root.xpath(
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            namespaces=namespaces)[0]
+
+        created = root.xpath(
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+            namespaces=namespaces)[0]
+
+        # pointOfContact
+        creators = root.xpath(
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
+            namespaces=namespaces)
+
+        if len(creators) > 1:
+            if creators[0] == creators[1]:
+                creator = creators[0]
+            else:
+                creator = ', '.join(creators)
+        elif len(creators) == 1:
+            creator = creators[0]
+        else:
+            creator = 'Geoscience Australia'
+
+        # if the item has a DOI, use that, else the URI
+        doi = root.xpath(
+            '//mrd:onLine/cit:CI_OnlineResource[cit:name/gco:CharacterString/text()="Digital Object Identifier"]/cit:linkage/gco:CharacterString/text()',
+            namespaces=namespaces)
+        if len(doi) > 0:
+            doi_or_uri = 'doi:' + doi[0][18:]
+        else:
+            doi_or_uri = config.URI_DATASET_INSTANCE_BASE + self.id
+
+        todays_date = datetime.datetime.now().strftime('%Y-%m-%d')
+
+        vars = {
+            'creators': creator,
+            'publication_year': created[:4],
+            'title': title,
+            'doi_or_uri': doi_or_uri,
+            'todays_date': todays_date
+        }
+
+        if format == 'text/plain':
+            template = '{creators} ({publication_year}). {title}. A Geoscience Australia catalogue item. {doi_or_uri}. ' \
+                       'Accessed {todays_date}.'
+
+            return template.format(**vars)
+
+        else:  # application/json
+            import json
+            return json.dumps(vars)
