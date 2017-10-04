@@ -529,7 +529,8 @@ class DatasetRenderer(Renderer):
             'mrl': 'http://standards.iso.org/iso/19115/-3/mrl/1.0',
             'xlink': 'http://www.w3.org/1999/xlink',
             'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-            'geonet': 'http://www.fao.org/geonetwork'
+            'geonet': 'http://www.fao.org/geonetwork',
+            'srv': 'http://standards.iso.org/iso/19115/-3/srv/2.0'
         }
 
         title = root.xpath(
