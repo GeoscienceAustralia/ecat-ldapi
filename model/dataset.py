@@ -546,8 +546,19 @@ class DatasetRenderer(Renderer):
 
         # pointOfContact
         creators = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
+
+        if len(creators) > 1:
+            if creators[0] == creators[1]:
+                creator = creators[0]
+            else:
+                creator = ', '.join(creators)
+        elif len(creators) == 1:
+            creator = creators[0]
+        else:
+            creator = ''
 
         publisher = 'Geoscience Australia'
 
@@ -562,15 +573,21 @@ class DatasetRenderer(Renderer):
         audience = 'audience x'
 
         license = root.xpath(
+            '//mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()|'
             '//mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
-            namespaces=namespaces)[0]
+            namespaces=namespaces)
+
+        if len(license) < 1:
+            license = ''
+        else:
+            license = license[0]
 
         return {
             'identifier': _config.URI_DATASET_INSTANCE_BASE + str(self.id),
             'title': title,
             'created': created[:10],
             'modified': modified[:10],
-            'creator': '; '.join(creators),
+            'creator': creator,
             'publisher': publisher,
             'subjects': subjects,
             'description': description,
