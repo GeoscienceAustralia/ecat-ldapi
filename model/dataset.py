@@ -52,6 +52,8 @@ class DatasetRenderer(Renderer):
         if view == 'dct':
             # renders a table of basic DCT properties in HTML
             metadata = self._get_dct_dict_from_csw_xml()
+            if metadata is None:
+                return None
             metadata['ecat_id'] = str(self.id)
             return render_template(
                 'class_dct.html',
@@ -60,6 +62,8 @@ class DatasetRenderer(Renderer):
         elif view == 'metatag':
             # renders GeoNetwork-delivered CSW XML as custom HTML
             metatag_dict = self._get_metatag_dict_from_csw_xml()
+            if metatag_dict is None:
+                return None
             return self._render_metatag_html(metatag_dict)
         else:  # view == 'ISO19115-2014':
             return render_template(
