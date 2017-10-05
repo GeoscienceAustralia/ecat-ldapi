@@ -18,17 +18,33 @@ class DatasetRenderer(Renderer):
 
     def render(self, view, format):
         if view == 'apa':
-            return Response(self.export_apa(format), mimetype=format)
+            c = self.export_apa(format)
+            if c is None:
+                return Response('There is no record with that eCat ID', status=404, mimetype='text/plain')
+            else:
+                return Response(c, mimetype=format)
         elif format == 'text/html':
-            return Response(self.export_html(view), mimetype=format)
+            c = self.export_html(view)
+            if c is None:
+                return Response('There is no record with that eCat ID', status=404, mimetype='text/plain')
+            else:
+                return Response(c, mimetype=format)
         elif format == 'text/xml' or format == 'application/xml':
             if view == 'ISO19115-2014':
                 # if it's the ISO view, just redirect to GeoNetwork's CSW
                 return redirect(_config.URI_DATASET_INSTANCE_BASE + str(self.id) + '?_format=application/xml')
             else:
-                return Response(self.export_xml(view), mimetype=format)
+                c = self.export_xml(view)
+                if c is None:
+                    return Response('There is no record with that eCat ID', status=404, mimetype='text/plain')
+                else:
+                    return Response(c, mimetype=format)
         elif format in LDAPI.get_rdf_mimetypes_list():
-            return Response(self.export_rdf(view, format), mimetype=format)
+            c = self.export_rdf(view, format)
+            if c is None:
+                return Response('There is no record with that eCat ID', status=404, mimetype='text/plain')
+            else:
+                return Response(c, mimetype=format)
         else:
             return Response('The requested model model is not valid for this class', status=400, mimetype='text/plain')
 
@@ -122,13 +138,24 @@ class DatasetRenderer(Renderer):
             proxies=_config.PROXIES,
             verify=True
         )
-        return etree.fromstring(r.content)
+        # return None for missing records or incorrect eCat IDs
+        root = etree.fromstring(r.content)
+        namespaces = {
+            'csw': 'http://www.opengis.net/cat/csw/2.0.2'
+        }
+        if root.xpath('//csw:SearchResults/@numberOfRecordsMatched=0', namespaces=namespaces):
+            return None
+        else:
+            return etree.fromstring(r.content)
 
     def _get_xml_from_file(self, file_name):
         return etree.parse(file_name)
 
     def _get_agls_dict_from_csw_xml(self):
         root = self._get_xml_from_csw()
+        # cater for missing records
+        if root is None:
+            return None
 
         # XPath to all the vars we want
         namespaces = {
@@ -230,26 +257,26 @@ class DatasetRenderer(Renderer):
         '''
 
         title = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            '//cit:CI_Citation/cit:title/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         modified = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
+            '//cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         # pointOfContact
         creators = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
+            '//cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
 
         publisher = 'corporateName=Geoscience Australia; address=Cnr Jerrabomberra Ave and Hindmarsh Dr GPO Box 378 Canberra ACT Australia 2601; contact=02 6249 9966; email=clientservices@ga.gov.au'
 
         subjects = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+            '//mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
             namespaces=namespaces)
 
         description = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
+            '//mri:abstract/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         category = 'category x'
@@ -302,6 +329,9 @@ class DatasetRenderer(Renderer):
 
     def _get_agrif_dict_from_csw_xml(self):
         root = self._get_xml_from_csw()
+        # cater for missing records
+        if root is None:
+            return None
 
         # XPath to all the vars we want
         namespaces = {
@@ -513,6 +543,9 @@ class DatasetRenderer(Renderer):
 
     def _get_dct_dict_from_csw_xml(self):
         root = self._get_xml_from_csw()
+        # cater for missing records
+        if root is None:
+            return None
 
         # XPath to all the vars we want
         namespaces = {
@@ -636,6 +669,9 @@ class DatasetRenderer(Renderer):
 
     def _get_metatag_dict_from_csw_xml(self):
         root = self._get_xml_from_csw()
+        # cater for missing records
+        if root is None:
+            return None
 
         # XPath to all the vars we want
         namespaces = {
@@ -768,6 +804,9 @@ class DatasetRenderer(Renderer):
 
     def export_apa(self, format):
         root = self._get_xml_from_csw()
+        # cater for missing records
+        if root is None:
+            return None
 
         # XPath to all the vars we want
         namespaces = {
