@@ -99,6 +99,10 @@ class DatasetRenderer(Renderer):
         elif view == 'dataset':
             # renders an RDF file according to Dataset-O
             pass
+        elif view == 'dcat':
+            # renders an RDF file according to Dataset-O
+            dcat_metata_dict = self._get_dcat_dict_from_csw_xml()
+            return self._render_dcat_rdf(dcat_metata_dict, format)
         elif view == 'dct':
             # renders an RDF file according to DCT
             dct_metata_dict = self._get_dct_dict_from_csw_xml()
@@ -545,6 +549,98 @@ class DatasetRenderer(Renderer):
 
         return g.serialize(format=LDAPI.get_rdf_parser_for_mimetype(format))
 
+    def _get_dcat_dict_from_csw_xml(self):
+        root = self._get_xml_from_csw()
+        # cater for missing records
+        if root is None:
+            return None
+
+        # XPath to all the vars we want
+        namespaces = {
+            'mdb': 'http://standards.iso.org/iso/19115/-3/mdb/1.0',
+            'cit': 'http://standards.iso.org/iso/19115/-3/cit/1.0',
+            'gco': 'http://standards.iso.org/iso/19115/-3/gco/1.0',
+            'gcx': 'http://standards.iso.org/iso/19115/-3/gcx/1.0',
+            'gex': 'http://standards.iso.org/iso/19115/-3/gex/1.0',
+            'gml': 'http://www.opengis.net/gml/3.2',
+            'lan': 'http://standards.iso.org/iso/19115/-3/lan/1.0',
+            'mcc': 'http://standards.iso.org/iso/19115/-3/mcc/1.0',
+            'mco': 'http://standards.iso.org/iso/19115/-3/mco/1.0',
+            'mmi': 'http://standards.iso.org/iso/19115/-3/mmi/1.0',
+            'mrd': 'http://standards.iso.org/iso/19115/-3/mrd/1.0',
+            'mri': 'http://standards.iso.org/iso/19115/-3/mri/1.0',
+            'mrl': 'http://standards.iso.org/iso/19115/-3/mrl/1.0',
+            'xlink': 'http://www.w3.org/1999/xlink',
+            'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            'geonet': 'http://www.fao.org/geonetwork',
+            'srv': 'http://standards.iso.org/iso/19115/-3/srv/2.0'
+        }
+
+        title = root.xpath(
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            namespaces=namespaces)[0]
+
+        created = root.xpath(
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+            namespaces=namespaces)[0]
+
+        modified = root.xpath(
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
+            namespaces=namespaces)[0]
+
+        # pointOfContact
+        creators = root.xpath(
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
+            namespaces=namespaces)
+
+        if len(creators) > 1:
+            if creators[0] == creators[1]:
+                creator = creators[0]
+            else:
+                creator = ', '.join(creators)
+        elif len(creators) == 1:
+            creator = creators[0]
+        else:
+            creator = ''
+
+        publisher = 'Geoscience Australia'
+
+        subjects = root.xpath(
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+            namespaces=namespaces)
+
+        description = root.xpath(
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
+            namespaces=namespaces)[0]
+
+        audience = 'audience x'
+
+        license = root.xpath(
+            '//mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()|'
+            '//mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            namespaces=namespaces)
+
+        if len(license) < 1:
+            license = ''
+        else:
+            license = license[0]
+
+        return {
+            'identifier': _config.URI_DATASET_INSTANCE_BASE + str(self.id),
+            'title': title,
+            'created': created[:10],
+            'modified': modified[:10],
+            'creator': creator,
+            'publisher': publisher,
+            'keywords': subjects,
+            'description': description,
+            'audience': audience,
+            'rights': license,
+            'date_now': datetime.datetime.now().strftime('%d %B %Y'),
+            'contactPoint': 'http://pid.geoscience.gov.au/org/ga/geoscienceaustralia'
+        }
+
     def _get_dct_dict_from_csw_xml(self):
         root = self._get_xml_from_csw()
         # cater for missing records
@@ -647,6 +743,33 @@ class DatasetRenderer(Renderer):
         template = Environment(loader=FileSystemLoader(_config.TEMPLATES_DIR)).from_string(template_file)
 
         return template.render(**metadata_dict)
+
+    def _render_dcat_rdf(self, metadata_dict, format):
+        g = Graph()
+        DCT = Namespace('http://reference.data.gov.au/def/ont/agrif#')
+        g.bind('dct', DCT)
+
+        DTYPES = Namespace('http://www.w3.org/ns/dcat-vocabulary#')
+        g.bind('dcmitype', DTYPES)
+
+        DCAT = Namespace('http://www.w3.org/ns/dcat#')
+        g.bind('dct', DCAT)
+
+        this_uri = URIRef(config.URI_DATASET_INSTANCE_BASE + str(self.id))
+        g.add((this_uri, RDF.type, DTYPES.Dataset))
+
+        g.add((this_uri, DCT.title, Literal(metadata_dict['title'], datatype=XSD.string)))
+        g.add((this_uri, DCT.created, Literal(metadata_dict['created'], datatype=XSD.date)))
+        g.add((this_uri, DCT.modified, Literal(metadata_dict['modified'], datatype=XSD.date)))
+        g.add((this_uri, DCT.creator, Literal(metadata_dict['creator'], datatype=XSD.string)))
+        g.add((this_uri, DCT.publisher, Literal(metadata_dict['publisher'], datatype=XSD.string)))
+        for subject in metadata_dict['keywords']:
+            g.add((this_uri, DCAT.keyword, Literal(subject, datatype=XSD.string)))
+        g.add((this_uri, DCT.description, Literal(metadata_dict['description'], datatype=XSD.string)))
+        g.add((this_uri, DCT.audience, Literal('audience x', datatype=XSD.string)))
+        g.add((this_uri, DCAT.contactPoint, URIRef(metadata_dict['contactPoint'])))
+
+        return g.serialize(format=format)
 
     def _render_dct_rdf(self, metadata_dict, format):
         g = Graph()

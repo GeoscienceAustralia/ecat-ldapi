@@ -69,6 +69,16 @@
       "namespace": "http://reference.data.gov.au/def/ont/dataset",
       "description": "The Dataset Ontology from the Australian Government Linked Data Working Group"
     },
+    "dcat": {
+      "mimetypes": [
+        "text/turtle",
+        "application/rdf+xml",
+        "application/rdf+json"
+      ],
+      "default_mimetype": "text/turtle",
+      "namespace": "http://www.w3.org/ns/dcat#",
+      "description": "Data Catalog Vocabulary (DCAT) from the W3C"
+    },
     "dct": {
       "mimetypes": [
         "text/html",
