@@ -34,14 +34,14 @@ For the GA eCat instance, this application's individual dataset endpoint is redi
 
 
 ## License
-This code is licensed using Creative Commons 4.0 International (see [LICENSE file](LICENSE)).
+This code is licensed using Creative Commons 4.0 International. See the [license deed](LICENSE) for details.
 
 
-## Authors & Contacts
+## Contacts
 This code repository is developed and maintained by [Geoscience Australia](http://www.ga.gov.au) (GA). Author:  
 
 **Nicholas Car**  
-Data Architect  
+*Data Architect*  
 Geoscience Australia  
 <nicholas.car@ga.gov.au>   
 <http://orcid.org/0000-0002-8742-7730>  
