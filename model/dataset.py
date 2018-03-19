@@ -89,24 +89,31 @@ class DatasetRenderer(Renderer):
             pass
 
     def export_rdf(self, view='dataset', format='text/turtle'):
-        if view == 'agls':
-            # renders an RDF file according to AGLS
-            pass
-        elif view == 'agrif':
-            # renders an RDF file according to AGLS
+        if view == 'agrif':
+            # renders an RDF file according to AGRIF
             agrif_metata_dict = self._get_agrif_dict_from_csw_xml()
-            return self._render_agrif_rdf(agrif_metata_dict, format)
+            if agrif_metata_dict is not None:
+                return self._render_agrif_rdf(agrif_metata_dict, format)
+            else:
+                return None
         elif view == 'dataset':
             # renders an RDF file according to Dataset-O
             pass
         elif view == 'dcat':
             # renders an RDF file according to Dataset-O
             dcat_metata_dict = self._get_dcat_dict_from_csw_xml()
-            return self._render_dcat_rdf(dcat_metata_dict, format)
+            if dcat_metata_dict is not None:
+                return self._render_dcat_rdf(dcat_metata_dict, format)
+            else:
+                return None
+
         elif view == 'dct':
             # renders an RDF file according to DCT
             dct_metata_dict = self._get_dct_dict_from_csw_xml()
-            return self._render_dct_rdf(dct_metata_dict, format)
+            if dct_metata_dict is not None:
+                return self._render_dct_rdf(dct_metata_dict, format)
+            else:
+                return None
 
     def _get_xml_from_csw(self):
         csw_uri = 'https://public.ecat.ga.gov.au/geonetwork/srv/eng/csw'
@@ -152,6 +159,7 @@ class DatasetRenderer(Renderer):
             'csw': 'http://www.opengis.net/cat/csw/2.0.2'
         }
         if root.xpath('//csw:SearchResults/@numberOfRecordsMatched=0', namespaces=namespaces):
+            print('found none')
             return None
         else:
             return etree.fromstring(r.content)
@@ -758,6 +766,8 @@ class DatasetRenderer(Renderer):
         this_uri = URIRef(config.URI_DATASET_INSTANCE_BASE + str(self.id))
         g.add((this_uri, RDF.type, DTYPES.Dataset))
 
+        import pprint
+        pprint.pprint(metadata_dict)
         g.add((this_uri, DCT.title, Literal(metadata_dict['title'], datatype=XSD.string)))
         g.add((this_uri, DCT.created, Literal(metadata_dict['created'], datatype=XSD.date)))
         g.add((this_uri, DCT.modified, Literal(metadata_dict['modified'], datatype=XSD.date)))

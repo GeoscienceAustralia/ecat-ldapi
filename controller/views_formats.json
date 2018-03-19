@@ -22,23 +22,11 @@
     },
     "agls": {
       "mimetypes": [
-        "text/turtle",
-        "application/rdf+xml",
-        "application/rdf+json",
-        "application/xml",
         "text/xml"
       ],
-      "default_mimetype": "application/xml",
+      "default_mimetype": "text/xml",
       "namespace": "http://www.agls.gov.au/agls/1.2/",
       "description": "Australian Government Locator Service (AGLS) metadata schema. Published as Australian Standard AS 5044-2010"
-    },
-    "agrkms": {
-      "mimetypes": [
-        "application/xml"
-      ],
-      "default_mimetype": "application/xml",
-      "namespace": "http://www.naa.gov.au/information-management/managing-information-and-records/describing/metadata/AGRKMS/index.aspx",
-      "description": "Australian Government Recordkeeping Metadata Standard (AGRkMS). Published by the National Archives of Australia"
     },
     "agrif": {
       "mimetypes": [
@@ -58,16 +46,6 @@
       "default_mimetype": "text/plain",
       "namespace": "https://github.com/citation-style-language/styles/blob/master/apa.csl",
       "description": "The American Psychological Association 6th edition citation format"
-    },
-    "dataset": {
-      "mimetypes": [
-        "text/turtle",
-        "application/rdf+xml",
-        "application/rdf+json"
-      ],
-      "default_mimetype": "text/turtle",
-      "namespace": "http://reference.data.gov.au/def/ont/dataset",
-      "description": "The Dataset Ontology from the Australian Government Linked Data Working Group"
     },
     "dcat": {
       "mimetypes": [
