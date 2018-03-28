@@ -1,9 +1,9 @@
-from model import functions
+from controller import functions
 
 
 def test_make_html():
     metadata = {
-        'identifier': 'http://pid.geoscience.gov.au/dataset/103620',
+        'identifier': 'http://pid.geoscience.gov.au/dataset/103620.xml',
         'type': 'software',
         'creator': 'Car, N.J., Ip, A.',
         'publisher': 'Geoscience Australia',
@@ -16,4 +16,47 @@ The tool is presented in a code repository using the Git distributed version con
         'keywords': ', '.join(['SKOS', 'Linked Data', 'netCDF', 'vocabulary', 'metadata'])
     }
 
-    open('103620.html', 'w').write(functions.render_metatag_html(metadata))
+    open('103620.xml.html', 'w').write(functions.render_metatag_html(metadata))
+
+
+if __name__ == '__main__':
+    import requests
+
+    csw_uri = 'https://public.ecat.ga.gov.au/geonetwork/srv/eng/csw'
+    csw_request_xml = '''
+        <csw:GetRecords
+            service="CSW"
+            version="2.0.2"
+            resultType="results"
+            outputSchema="own"
+            xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
+            xmlns:ogc="http://www.opengis.net/ogc" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2
+            http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
+            <csw:Query typeNames="csw:Record">
+                <csw:ElementSetName>full</csw:ElementSetName>
+                <csw:Constraint version="1.1.0">
+                    <ogc:Filter>
+                        <ogc:PropertyIsEqualTo>
+                            <ogc:PropertyName>AlternateIdentifier</ogc:PropertyName>
+                            <ogc:Literal>{}</ogc:Literal>
+                        </ogc:PropertyIsEqualTo>
+                    </ogc:Filter>
+                </csw:Constraint>
+            </csw:Query>
+        </csw:GetRecords>
+        '''.format(str(111821))
+
+    headers = {
+        'Content-Type': 'application/xml'
+    }
+
+    r = requests.post(
+        csw_uri,
+        data=csw_request_xml,
+        headers=headers,
+        verify=True
+    )
+
+    print(r.content.decode('utf-8'))

@@ -153,6 +153,7 @@ class DatasetRenderer(Renderer):
             proxies=_config.PROXIES,
             verify=True
         )
+
         # return None for missing records or incorrect eCat IDs
         root = etree.fromstring(r.content)
         namespaces = {
@@ -282,10 +283,12 @@ class DatasetRenderer(Renderer):
 
         # pointOfContact
         creators = root.xpath(
-            '//cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
+            '//cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/'
+            'cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
 
-        publisher = 'corporateName=Geoscience Australia; address=Cnr Jerrabomberra Ave and Hindmarsh Dr GPO Box 378 Canberra ACT Australia 2601; contact=02 6249 9966; email=clientservices@ga.gov.au'
+        publisher = 'corporateName=Geoscience Australia; address=Cnr Jerrabomberra Ave and Hindmarsh Dr ' \
+                    'GPO Box 378 Canberra ACT Australia 2601; contact=02 6249 9966; email=clientservices@ga.gov.au'
 
         subjects = root.xpath(
             '//mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
@@ -303,7 +306,10 @@ class DatasetRenderer(Renderer):
         # <dcterms:audience xsi:type="aglsterms:agls-audience">all</dcterms:audience>
         audience = 'all'
 
-        # <aglsterms:availability xsi:type="aglsterms:AglsAgent"> corporateName=National Archives of Australia; address=Box 7425 Canberra Business Centre ACT 2610; contact=National Reference Service, 1300 886 881; email=ref@naa.gov.au; cost=AU$25.00 (inc GST) for purchases within Australia, AU$28.00 (GST free) for purchases outside Australia </aglsterms:availability>
+        # <aglsterms:availability xsi:type="aglsterms:AglsAgent"> corporateName=National Archives of Australia;
+        # address=Box 7425 Canberra Business Centre ACT 2610; contact=National Reference Service, 1300 886 881;
+        # email=ref@naa.gov.au; cost=AU$25.00 (inc GST) for purchases within Australia, AU$28.00 (GST free) for
+        # purchases outside Australia </aglsterms:availability>
         availability = publisher + '; cost=free'
 
         # '<dcterms:coverage xsi:type="aglsterms:AglsJuri">South Australia</dcterms:coverage>'
@@ -370,30 +376,37 @@ class DatasetRenderer(Renderer):
         }
 
         title = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:title/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         created = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/'
+            'cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         modified = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/'
+            'cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         # pointOfContact
         creators = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/'
+            'gco:CharacterString/text()',
             namespaces=namespaces)
 
         publisher = 'Geoscience Australia'
 
         subjects = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/'
+            'mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
             namespaces=namespaces)
 
         description = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/'
+            'gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         '''
@@ -444,12 +457,14 @@ class DatasetRenderer(Renderer):
 
             # SRID=8311;POLYGON((140 -32.57, 141 -32.57, 141 -33.08, 141 -33.08, 140 -32.57))
             if west and east and south and north:
-                coverage = 'SRID=8311;POLYGON(({west} {north}, {east} {north}, {east} {south}, {east} {south}, {west} {north}))'.format(
-                    west=west,
-                    east=east,
-                    south=south,
-                    north=north
-                )
+                coverage = 'SRID=8311;POLYGON(({west} {north}, {east} {north}, {east} {south}, ' \
+                           '{east} {south}, {west} {north}))'\
+                    .format(
+                        west=west,
+                        east=east,
+                        south=south,
+                        north=north
+                    )
             else:
                 coverage = None
         else:
@@ -585,21 +600,29 @@ class DatasetRenderer(Renderer):
         }
 
         title = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:title/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:citation/cit:CI_Citation/'
+            'cit:title/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         created = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/'
+            'cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         modified = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/'
+            'cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         # pointOfContact
         creators = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/'
+            'cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/'
+            'cit:name/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/'
+            'cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
 
         if len(creators) > 1:
@@ -615,11 +638,15 @@ class DatasetRenderer(Renderer):
         publisher = 'Geoscience Australia'
 
         subjects = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/'
+            'mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
             namespaces=namespaces)
 
         description = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/'
+            'gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:abstract/'
+            'gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         audience = 'audience x'
@@ -634,6 +661,21 @@ class DatasetRenderer(Renderer):
         else:
             license = license[0]
 
+        '''
+        <mrl:scope>
+            <mcc:MD_Scope>
+              <mcc:level>
+                <mcc:MD_ScopeCode codeList="codeListLocation#MD_ScopeCode" codeListValue="service" />
+              </mcc:level>
+            </mcc:MD_Scope>
+        </mrl:scope>
+        '''
+
+        scope = root.xpath(
+            '//mrl:scope/mcc:MD_Scope/mcc:level/mcc:MD_ScopeCode/@codeListValue',
+            namespaces=namespaces)
+        print(scope)
+
         return {
             'identifier': _config.URI_DATASET_INSTANCE_BASE + str(self.id),
             'title': title,
@@ -646,7 +688,8 @@ class DatasetRenderer(Renderer):
             'audience': audience,
             'rights': license,
             'date_now': datetime.datetime.now().strftime('%d %B %Y'),
-            'contactPoint': 'http://pid.geoscience.gov.au/org/ga/geoscienceaustralia'
+            'contactPoint': 'http://pid.geoscience.gov.au/org/ga/geoscienceaustralia',
+            'scope': scope[0]
         }
 
     def _get_dct_dict_from_csw_xml(self):
@@ -677,21 +720,27 @@ class DatasetRenderer(Renderer):
         }
 
         title = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:title/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         created = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/'
+            'cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         modified = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/'
+            'cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         # pointOfContact
         creators = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/'
+            'gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/'
+            'cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
 
         if len(creators) > 1:
@@ -707,11 +756,13 @@ class DatasetRenderer(Renderer):
         publisher = 'Geoscience Australia'
 
         subjects = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/'
+            'mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
             namespaces=namespaces)
 
         description = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/'
+            'gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         audience = 'audience x'
@@ -761,13 +812,13 @@ class DatasetRenderer(Renderer):
         g.bind('dcmitype', DTYPES)
 
         DCAT = Namespace('http://www.w3.org/ns/dcat#')
-        g.bind('dct', DCAT)
+        g.bind('dcat', DCAT)
 
         this_uri = URIRef(config.URI_DATASET_INSTANCE_BASE + str(self.id))
-        g.add((this_uri, RDF.type, DTYPES.Dataset))
+        g.add((this_uri, RDF.type, DCAT.Dataset))
+        if metadata_dict['scope'] == 'service':
+            g.add((this_uri, RDF.type, DTYPES.Service))
 
-        import pprint
-        pprint.pprint(metadata_dict)
         g.add((this_uri, DCT.title, Literal(metadata_dict['title'], datatype=XSD.string)))
         g.add((this_uri, DCT.created, Literal(metadata_dict['created'], datatype=XSD.date)))
         g.add((this_uri, DCT.modified, Literal(metadata_dict['modified'], datatype=XSD.date)))
@@ -836,23 +887,31 @@ class DatasetRenderer(Renderer):
             namespaces=namespaces)[0]
 
         title = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:title/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:citation/cit:CI_Citation/'
+            'cit:title/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         type = root.xpath(
-            '//mdb:MD_Metadata/mdb:metadataScope/mdb:MD_MetadataScope/mdb:resourceScope/mcc:MD_ScopeCode/@codeListValue',
+            '//mdb:MD_Metadata/mdb:metadataScope/mdb:MD_MetadataScope/mdb:resourceScope/mcc:MD_ScopeCode/'
+            '@codeListValue',
             namespaces=namespaces)[0]
 
         description = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:abstract/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:abstract/'
+            'gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:abstract/'
+            'gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         # pointOfContact
         creators = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/'
+            'gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/'
+            'cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
 
         if len(creators) > 1:
@@ -868,13 +927,15 @@ class DatasetRenderer(Renderer):
         publisher = 'Geoscience Australia'
 
         created = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/'
+            '@codeListValue="creation"]/cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         created = datetime.datetime.strptime(created, '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
 
         modified = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="revision"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/'
+            '@codeListValue="revision"]/cit:date/gco:DateTime/text()',
             namespaces=namespaces)
 
         if len(modified) < 1:
@@ -883,8 +944,10 @@ class DatasetRenderer(Renderer):
             modified = datetime.datetime.strptime(modified[0], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
 
         rights_title = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/'
+            'mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:resourceConstraints/'
+            'mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:title/gco:CharacterString/text()',
             namespaces=namespaces)
 
         if len(rights_title) < 1:
@@ -893,8 +956,12 @@ class DatasetRenderer(Renderer):
             rights_title = rights_title[0]
 
         rights_url = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:resourceConstraints/mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/cit:linkage/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:resourceConstraints/'
+            'mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/'
+            'cit:linkage/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:resourceConstraints/'
+            'mco:MD_LegalConstraints/mco:reference/cit:CI_Citation/cit:onlineResource/cit:CI_OnlineResource/'
+            'cit:linkage/gco:CharacterString/text()',
             namespaces=namespaces)
 
         if len(rights_url) < 1:
@@ -908,8 +975,10 @@ class DatasetRenderer(Renderer):
             rights = ''
 
         keywords = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:descriptiveKeywords/mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:descriptiveKeywords/'
+            'mri:MD_Keywords/mri:keyword/gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:descriptiveKeywords/'
+            'mri:MD_Keywords/mri:keyword/gco:CharacterString/text()',
             namespaces=namespaces)
 
         return {
@@ -967,17 +1036,22 @@ class DatasetRenderer(Renderer):
         }
 
         title = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:title/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:title/gco:CharacterString/text()',
             namespaces=namespaces)[0]
 
         created = root.xpath(
-            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/@codeListValue="creation"]/cit:date/gco:DateTime/text()',
+            '//mdb:MD_Metadata/mdb:dateInfo/cit:CI_Date[cit:dateType/cit:CI_DateTypeCode/'
+            '@codeListValue="creation"]/cit:date/gco:DateTime/text()',
             namespaces=namespaces)[0]
 
         # pointOfContact
         creators = root.xpath(
-            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/gco:CharacterString/text()|'
-            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
+            '//mdb:MD_Metadata/mdb:identificationInfo/mri:MD_DataIdentification/mri:citation/cit:CI_Citation/'
+            'cit:citedResponsibleParty/cit:CI_Responsibility/cit:party/cit:CI_Individual/cit:name/'
+            'gco:CharacterString/text()|'
+            '//mdb:MD_Metadata/mdb:identificationInfo/srv:SV_ServiceIdentification/mri:pointOfContact/'
+            'cit:CI_Responsibility/cit:party/cit:CI_Organisation/cit:name/gco:CharacterString/text()',
             namespaces=namespaces)
 
         if len(creators) > 1:
@@ -992,7 +1066,8 @@ class DatasetRenderer(Renderer):
 
         # if the item has a DOI, use that, else the URI
         doi = root.xpath(
-            '//mrd:onLine/cit:CI_OnlineResource[cit:name/gco:CharacterString/text()="Digital Object Identifier"]/cit:linkage/gco:CharacterString/text()',
+            '//mrd:onLine/cit:CI_OnlineResource[cit:name/gco:CharacterString/text()="Digital Object Identifier"]/'
+            'cit:linkage/gco:CharacterString/text()',
             namespaces=namespaces)
         if len(doi) > 0:
             doi_or_uri = 'doi:' + doi[0][18:]
@@ -1010,8 +1085,8 @@ class DatasetRenderer(Renderer):
         }
 
         if format == 'text/plain':
-            template = '{creators} ({publication_year}). {title}. A Geoscience Australia catalogue item. {doi_or_uri}. ' \
-                       'Accessed {todays_date}.'
+            template = '{creators} ({publication_year}). {title}. A Geoscience Australia catalogue item. ' \
+                       '{doi_or_uri}. Accessed {todays_date}.'
 
             return template.format(**vars)
 
