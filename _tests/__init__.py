@@ -1,5 +1,5 @@
 from controller import functions
-
+import _config as config
 
 def test_make_html():
     metadata = {
@@ -22,7 +22,6 @@ The tool is presented in a code repository using the Git distributed version con
 if __name__ == '__main__':
     import requests
 
-    csw_uri = 'https://public.ecat.ga.gov.au/geonetwork/srv/eng/csw'
     csw_request_xml = '''
         <csw:GetRecords
             service="CSW"
@@ -53,7 +52,7 @@ if __name__ == '__main__':
     }
 
     r = requests.post(
-        csw_uri,
+        config.DATASETS_CSW_ENDPOINT,
         data=csw_request_xml,
         headers=headers,
         verify=True

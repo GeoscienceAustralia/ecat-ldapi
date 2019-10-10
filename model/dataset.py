@@ -116,7 +116,6 @@ class DatasetRenderer(Renderer):
                 return None
 
     def _get_xml_from_csw(self):
-        csw_uri = 'https://public.ecat.ga.gov.au/geonetwork/srv/eng/csw'
         csw_request_xml = '''
             <csw:GetRecords
                 service="CSW"
@@ -147,7 +146,7 @@ class DatasetRenderer(Renderer):
         }
 
         r = requests.post(
-            csw_uri,
+            config.DATASETS_CSW_ENDPOINT,
             data=csw_request_xml,
             headers=headers,
             proxies=_config.PROXIES,

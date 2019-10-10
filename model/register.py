@@ -142,9 +142,9 @@ class RegisterRenderer(Renderer):
 
             # add all the items
             for item in self.register:
-                item_uri = URIRef(self.request.base_url + item)
+                item_uri = URIRef(self.request.base_url + str(item))
                 self.g.add((item_uri, RDF.type, URIRef(self.uri)))
-                self.g.add((item_uri, RDFS.label, Literal('Address ID:' + item, datatype=XSD.string)))
+                self.g.add((item_uri, RDFS.label, Literal('Address ID:' + str(item), datatype=XSD.string)))
                 self.g.add((item_uri, REG.register, page_uri))
 
 
